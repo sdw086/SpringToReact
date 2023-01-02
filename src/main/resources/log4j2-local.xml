@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<Properties>
+		<Property name="logNm">lms_log</Property>
+		<Property name="layoutPattern">%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue} %style{${sys:PID}}{magenta} [%15.15t] %style{%-40.40C{1.}}{cyan} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</Property>
+	</Properties>
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${layoutPattern}" disableAnsi="false"/>
+		</Console>
+
+		<RollingFile name="file" fileName="/usr/local/tomcat/logdata/${logNm}.log" filePattern="/usr/local/tomcat/logdata/rollover/%d{yyyy-MM-dd}/${logNm}_%d{yyyy-MM-dd}_%i.log">
+			<PatternLayout pattern="${layoutPattern}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="10MB" /> <!-- 10MB 용량이 초과시 DefaultRolloverStrategy 정책만큼 넘버링 -->
+				<TimeBasedTriggeringPolicy modulate="true" interval="1" /><!-- 일별 로그 파일 생성-->
+			</Policies>
+			<DefaultRolloverStrategy max="500" fileIndex="min" /><!-- 롤링 파일 500개 까지 생성 -->
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+
+		<!--
+		전체 로그 레벨 컨트롤.
+		레벨: all<trace<debug<info<warn<error<fatal<off
+		운영: error, 개발: debug
+		-->
+		<Root level="debug" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</Root>
+
+		<!-- 로그 -->
+		<logger name="com.example" level="debug" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+
+		<!-- 세부설정 -->
+		<logger name="org.springframework" level="debug" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+
+		<!-- db -->
+		<logger name="jdbc.*" level="info" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+		<logger name="jdbc.sqlonly" level="off" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+		<logger name="jdbc.sqltiming" level="info" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+		<logger name="jdbc.audit" level="off" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+		<logger name="jdbc.resultset" level="off" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+		<logger name="jdbc.resultsettable" level="info" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+		<logger name="jdbc.connection" level="off" additivity="false" >
+			<AppenderRef ref="console" />
+			<AppenderRef ref="file" />
+		</logger>
+	</Loggers>
+</Configuration>

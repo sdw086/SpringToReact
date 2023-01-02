@@ -1,0 +1,114 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.4'
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+    id 'java'
+    id 'war'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // jdbc
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.mariadb.jdbc:mariadb-java-client'
+
+    // log4j2
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+    // mybatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+
+    // annotation processor
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // aspectj
+    implementation 'org.aspectj:aspectjrt:1.9.6'
+    implementation 'org.aspectj:aspectjweaver:1.9.6'
+
+    // jose4j
+    implementation 'org.bitbucket.b_c:jose4j:0.4.4'
+
+    // jsonwebtoken
+    implementation 'io.jsonwebtoken:jjwt-api:0.10.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.10.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.10.2'
+
+    // json object
+    implementation 'com.googlecode.json-simple:json-simple:1.1'
+
+    // mapper
+    implementation 'org.modelmapper:modelmapper:3.1.0'
+
+    // validator utils
+    implementation 'org.hibernate.validator:hibernate-validator:6.2.2.Final'
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+}
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+def frontendDir = "$projectDir/src/main/frontend"
+
+sourceSets {
+    main {
+        resources { srcDirs = ["$projectDir/src/main/resources"]
+        }
+    }
+}
+
+processResources { dependsOn "copyReactBuildFiles" }
+
+task installReact(type: Exec) {
+    workingDir "$frontendDir"
+    inputs.dir "$frontendDir"
+    group = BasePlugin.BUILD_GROUP
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "npm.cmd", "audit", "fix"
+        commandLine 'npm.cmd', 'install' }
+    else {
+        commandLine "npm", "audit", "fix" commandLine 'npm', 'install'
+    }
+}
+
+task buildReact(type: Exec) {
+    dependsOn "installReact"
+    workingDir "$frontendDir"
+    inputs.dir "$frontendDir"
+    group = BasePlugin.BUILD_GROUP
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "npm.cmd", "run-script", "build"
+    } else {
+        commandLine "npm", "run-script", "build"
+    }
+}
+
+task copyReactBuildFiles(type: Copy) {
+    dependsOn "buildReact"
+    from "$frontendDir/build"
+    into "$projectDir/src/main/resources/static"
+}
