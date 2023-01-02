@@ -19,11 +19,11 @@ import java.util.List;
 @Controller
 public class SinglePageAppController implements ErrorController {
 	// error handling for react
-	/*@RequestMapping(value = "/error")
+	@RequestMapping(value = "/error")
 	public String handleError() {
 		System.out.println("================================");
 		System.out.println("오류페이지 실행");
 		System.out.println("================================");
 		return "forward:/404";
-	}*/
+	}
 }

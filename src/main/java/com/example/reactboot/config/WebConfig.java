@@ -22,6 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(final InterceptorRegistry registry) {
 		registry.addInterceptor(new CustomHandler())
 				.addPathPatterns("/**")
-				.excludePathPatterns("/", "/static/**", "/*.ico", "/css/**", "/js/**");
+				.excludePathPatterns("/", "/static/**", "/*.ico", "/css/**", "/js/**", "/swagger-ui/**", "/api-docs/**", "/swagger-ui.html ");
 	}
 }

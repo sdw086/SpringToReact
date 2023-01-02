@@ -13,22 +13,20 @@ public class CustomHandler implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		/* React로 가지말아야할 url patten */
 		List<String> arrAntMatchUrl = new ArrayList<>(Arrays.asList(
-				"api", "index.html", "api-docs", "swagger-ui", "swagger-ui.html"
+				"api", "index.html"
 		));
 
 		String[] arrUrl = request.getServletPath().split("/");
 
 		if (!"".equals(arrUrl[1])) {
 			if (!arrAntMatchUrl.contains(arrUrl[1])) {
-				System.out.println("================================");
-				System.out.println("React go!!");
-				System.out.println("================================");
-
 				request.getRequestDispatcher("/").forward(request, response);
 
 				return false;
 			}
 		}
+		
+		System.out.println("통과");
 
 		return true;
 	}
