@@ -61,3 +61,4 @@ yarn-error.log*
 /src/main/frontend/node_modules
 /src/main/resources/static
 /src/main/frontend/build/**
+/src/main/frontend/build/
