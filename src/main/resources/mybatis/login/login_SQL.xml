@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.reactboot.login.mapper.LoginMapper">
+    <!-- 회원 로그인-->
+    <select id="selectMemberLogin" resultType="com.example.reactboot.login.vo.UserVo">
+        /* login.selectMemberLogin */
+		select	member_idx, member_id, pwd, member_div, member_auth, member_nm, tel, img, last_ip, member_status
+		,       date_format(last_date,'%Y.%m.%d') as last_date
+		from	td_member_mst
+		where	del_yn 			= 'N'
+		and		member_status 	= 1
+		and		member_id 		= #{memberId}
+        AND     member_Div  	= 'HQ'
+    </select>
+</mapper>

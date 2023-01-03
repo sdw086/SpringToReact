@@ -9,6 +9,7 @@ const Main = (props) => {
 				<Link to="/product/1"><li>1번상품</li></Link>
 				<Link to="/product/2"><li>2번상품</li></Link>
 				<Link to="/hello"><li>Api</li></Link>
+				<Link to="/loginPage"><li>로그인</li></Link>
 			</ul>
 		</>
 	);

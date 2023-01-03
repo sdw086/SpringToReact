@@ -9,22 +9,31 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
+    // spring boot, lombok, thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // jdbc
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.mariadb.jdbc:mariadb-java-client'
+
+    // security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
     // log4j2
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
@@ -46,6 +55,10 @@ dependencies {
     // jose4j
     implementation 'org.bitbucket.b_c:jose4j:0.4.4'
 
+    // xss
+    implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.1'
+    implementation 'com.navercorp.lucy:lucy-xss:1.6.3'
+
     // jsonwebtoken
     implementation 'io.jsonwebtoken:jjwt-api:0.10.2'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.10.2'
@@ -54,18 +67,28 @@ dependencies {
     // json object
     implementation 'com.googlecode.json-simple:json-simple:1.1'
 
+    // ftp
+    implementation 'commons-net:commons-net:3.8.0'
+
+    // file
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-fileupload:commons-fileupload:1.4'
+
+    // upload
+    implementation 'com.jfinal:cos:2022.2'
+
     // mapper
     implementation 'org.modelmapper:modelmapper:3.1.0'
-
-    // validator utils
-    implementation 'org.hibernate.validator:hibernate-validator:6.2.2.Final'
-    implementation 'javax.validation:validation-api:2.0.1.Final'
 }
 
 configurations {
     all {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     }
+}
+
+bootWar {
+    archiveName("api.war")
 }
 
 tasks.named('test') {

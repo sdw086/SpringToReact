@@ -27,7 +27,7 @@ public class OpenApiConfig {
                 .license(new License().name("Apache License Version 2.0").url("http://www.apache.org/licenses/LICENSE-2.0"));
 
         List<Server> servers = Arrays.asList(new Server().url(url).description("(" + active +")"));
-
+        
         SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER).name("Authorization");

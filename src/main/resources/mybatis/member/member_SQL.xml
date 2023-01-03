@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.reactboot.modules.member.mapper.MemberMapper">
+
+	<!-- 회원 로그인 -->
+	<select id="selectMemberLogin" resultType="com.example.reactboot.login.vo.UserVo">
+		/* member.selectMemberLogin */
+		select	member_idx, member_id, pwd, member_div, member_nm, tel, img, last_ip, member_status
+		,  		date_format(last_date,'%Y.%m.%d') as last_date
+		from	td_member_mst
+		where	del_yn      	= 'N'
+		and   	member_status   = 1
+		and		member_id   	= #{memberId}
+	</select>
+
+	<!-- 회원 목록 -->
+	<select id="selectMemberList" resultType="com.example.reactboot.modules.member.vo.MemberVo">
+		/* member.selectMemberList */
+		select total_count, row_num, member_idx, member_id, member_nm, tel, email, member_status, last_ip
+		, 	   (select member_id from td_member_mst where member_idx = z.create_member) as create_member
+		, 	   date_format(last_date,'%Y.%m.%d') as last_date
+		, 	   date_format(create_date,'%Y.%m.%d') as create_date
+		from (
+				select	count(*) over() as total_count, row_number() over(order by member_idx desc) as row_num
+				,  		member_idx, member_id, member_nm, tel, email, member_status, last_date, last_ip, create_date, create_member
+				from	td_member_mst
+				where	del_yn              = 'N'
+			<if test='searchStatus != "" and searchStatus != null'>
+				and     member_status       = #{searchStatus}
+			</if>
+			<if test='searchField != "" and searchField != null and searchWord != "" and searchWord != null'>
+				<choose>
+					<when test='searchField == "MEMBER_NM"'>
+					and	member_nm       like concat('%', #{searchWord}, '%')
+					</when>
+					<when test='searchField == "MEMBER_ID"'>
+					and	member_id       like concat('%', #{searchWord}, '%')
+					</when>
+				</choose>
+			</if>
+			<if test='searchField != "" and searchField != null and searchField == "ALL" and searchWord != "" and searchWord != null'>
+			and (member_nm       		like concat('%', #{searchWord}, '%') or member_id       like concat('%', #{searchWord}, '%'))
+			</if>
+		) z
+		<if test='firstRecordIndex > 0'>
+			where  row_num between #{firstRecordIndex} and #{lastRecordIndex}
+		</if>
+	</select>
+
+	<!-- 회원 상세 -->
+	<select id="selectMemberDetail" resultType="com.example.reactboot.modules.member.vo.MemberDetailVo">
+		/* member.selectMemberDetail */
+		select	member_idx, member_id, member_div, member_nm, tel, email, img, date_format(last_date,'%Y.%m.%d') as last_date, last_ip, member_status
+		from	td_member_mst
+		where	del_yn       = 'N'
+		and		member_idx   = #{memberIdx}
+	</select>
+
+	<!-- refresh token 확인 -->
+	<select id="selectRefreshToken" resultType="java.lang.String">
+		/* member.selectRefreshToken */
+		select	member_id
+		from	td_member_mst
+		where	member_status   = 1
+		and		del_yn          = 'N'
+		and		refresh_token   = #{refreshToken}
+	</select>
+
+	<!-- 아이디, 닉네임 중복 확인 -->
+	<select id="selectMemberDuplicate" resultType="String">
+		/*member.selectMemberDuplicate*/
+		select 	member_id
+		from 	td_member_mst
+		where 	member_id = #{checkVal}
+	</select>
+
+	<!-- 회원 등록 -->
+	<insert id="insertMember">
+		/* member.insertMember */
+		insert into td_member_mst (member_id, pwd, member_div, member_nm, tel, email, member_status, del_yn, create_date, create_member, update_date, update_member)
+		values 		(#{memberId}, #{pwd}, #{memberDiv}, #{memberNm}, #{tel}, #{email}, #{memberStatus}, 'N', current_timestamp(), #{createMember}, current_timestamp(), #{updateMember})
+	</insert>
+
+	<!-- 로그아웃 -->
+	<update id="updateMemberLogout">
+		/* member.updateMemberLogout */
+		update	td_member_mst
+		set		refresh_token   = ''
+		,		update_date     = current_timestamp()
+		,		update_member   = #{memberId}
+		where	member_id       = #{memberId}
+	</update>
+
+	<!--last login 저장 & refresh token 저장 -->
+	<update id="updateLastLogin">
+		/* member.updateLastLogin */
+		update	td_member_mst
+		set		last_date       = current_timestamp()
+		,		last_ip         = #{memberIp}
+		,		refresh_token   = #{refreshToken}
+		where	member_id       = #{memberId}
+	</update>
+
+	<!-- 회원 기본 정보 수정 -->
+	<update id="updateMemberInfo">
+		/* member.updateMemberInfo */
+		update	td_member_mst
+		set		member_nm       = #{memberNm}
+		,		tel             = #{tel}
+		,		email           = #{email}
+		,		update_date     = current_timestamp()
+		,		update_member   = #{updateMember}
+		where	member_idx      = #{memberIdx}
+	</update>
+
+</mapper>

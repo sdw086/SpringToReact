@@ -1,4 +1,4 @@
-package com.example.reactboot.moduls.api;
+package com.example.reactboot.modules.test;
 
 import com.example.reactboot.common.annotation.Noheader;
 import com.example.reactboot.common.response.JsonResponse;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Tag(name = "Token", description = "Token 만들기")
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "${api.data}/test")
 public class TokenController {
     @Value("${api.token.issuer}")
     private String API_TOKEN_ISSUER;
