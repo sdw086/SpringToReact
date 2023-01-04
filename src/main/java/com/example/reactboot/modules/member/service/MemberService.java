@@ -27,31 +27,9 @@ import java.util.regex.Pattern;
 
 @Service
 public class MemberService {
-
-    @Value("${api.token.typ}")
-    private String typ;
-    @Value("${api.token.alg}")
-    private String alg;
-    @Value("${api.token.api-key}")
-    private String apiKey;
-    @Value("${api.token.secret-key}")
-    private String secretKey;
-    @Value("${api.token.issuer}")
-    private String issuer;
-    @Value("${api.token.expire}")
-    private long expire;
-    @Value("${api.token.refresh-expire}")
-    private long expireOneDay;
-    @Value(("${api.token.student-url}"))
-    private String studentUrl;
-    @Value(("${api.token.parents-url}"))
-    private String parentsUrl;
-
     private final MemberMapper memberMapper;
     private final PasswordEncoder passwordEncoder;
     private final PropertyUtil propertyUtil;
-
-    JwtTokenUtil jwtTokenUtil   = new JwtTokenUtil();
 
     public MemberService(MemberMapper memberMapper, PasswordEncoder passwordEncoder, PropertyUtil propertyUtil) {
         this.memberMapper = memberMapper;
@@ -62,60 +40,14 @@ public class MemberService {
     /**
      * 로그인
      */
-    public MemberLoginVo selectMemberLogin(HttpServletRequest request, HttpServletResponse response, MemberDto memberDto) throws Exception {
-        String token                        = StringUtil.nvl(request.getHeader("Authorization"), "");
-        String refreshToken                 = StringUtil.nvl(request.getHeader("refreshToken"), "");
-
+    public MemberLoginVo selectMemberLogin(MemberDto memberDto) throws Exception {
         UserVo userVo = memberMapper.selectMemberLogin(memberDto.getUsername());
         ModelMapper modelMapper             = new ModelMapper();
         MemberLoginVo memberLoginVo         = new MemberLoginVo();
 
-        if(userVo != null && passwordEncoder.matches(AES128Crypto.decrypt(memberDto.getPwd()), userVo.getPwd()) == true) {
+        if(userVo != null && passwordEncoder.matches(AES128Crypto.decrypt(memberDto.getPwd()), userVo.getPwd())) {
             memberLoginVo = modelMapper.map(userVo, MemberLoginVo.class);
             memberLoginVo.setImg("fileUrl".concat(userVo.getImg()));
-
-            Map<String, Object> tokenMap    = new HashMap<>();
-
-            tokenMap.put("typ"              , typ);
-            tokenMap.put("alg"              , alg);
-            tokenMap.put("apiKey"           , apiKey);
-            tokenMap.put("secretKey"        , secretKey);
-            tokenMap.put("expire"           , expire);
-            tokenMap.put("expireOneDay"     , expireOneDay);
-            tokenMap.put("issuer"           , issuer);
-
-            if ("".equals(token)) {
-                token          = jwtTokenUtil.createToken(propertyUtil, memberLoginVo.memberId);
-                refreshToken   = jwtTokenUtil.refreshToken(propertyUtil, memberLoginVo.memberId);
-            } else {
-
-                if (Pattern.matches("Bearer .&", token)) {
-                    token   = token.replaceAll("^Bearer( )*", token);
-                    Map<String, Object> jwtClaims   = jwtTokenUtil.verifyJWT(secretKey, token);
-
-                    if ("exp".equals(jwtClaims.get("result"))) {    // token 만료시 재발행
-                        token          = jwtTokenUtil.createToken(propertyUtil, memberLoginVo.memberId);
-                        refreshToken   = jwtTokenUtil.refreshToken(propertyUtil, memberLoginVo.memberId);
-                    }
-                }
-            }
-
-            if ("ST".equals(memberDto.getMemberDiv())) {
-                response.setHeader("Access-Control-Allow-Origin", studentUrl);
-            } else {
-                response.setHeader("Access-Control-Allow-Origin", parentsUrl);
-            }
-
-            response.setHeader("Access-Control-Allow-Methods","GET, POST");
-            response.setHeader("access-Control-Expose-Headers", "Authorization, RefreshToken");
-            response.setHeader("Authorization"  , token);
-            response.setHeader("RefreshToken"   , refreshToken);
-
-            // last login & refresh token 저장
-            if (!"".equals(token)) {
-                String memberIp = request.getRemoteAddr();
-                memberMapper.updateLastLogin(memberDto.getUsername(), memberIp, refreshToken);
-            }
         }
 
         return memberLoginVo;

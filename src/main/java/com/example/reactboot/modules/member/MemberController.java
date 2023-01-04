@@ -1,6 +1,5 @@
 package com.example.reactboot.modules.member;
 
-import com.example.reactboot.common.annotation.Noheader;
 import com.example.reactboot.common.response.JsonResponse;
 import com.example.reactboot.modules.member.dto.MemberDto;
 import com.example.reactboot.modules.member.dto.MemberJoinDto;
@@ -35,7 +34,6 @@ public class MemberController {
 	/**
 	 * 회원 로그인
 	 */
-	@Noheader
 	@Operation(summary = "회원 로그인", description = "로그인 처리 및 회원 정보 전달", responses = {
 			@ApiResponse(responseCode = "200", description = "로그인 성공")
 			, @ApiResponse(responseCode = "500", description = "로그인 오류", content = @Content(schema = @Schema(implementation = JsonResponse.class)))
@@ -54,7 +52,7 @@ public class MemberController {
 		memberDto.setUsername(username);
 		memberDto.setPwd(passwd);
 
-		MemberLoginVo memberLoginVo         = memberService.selectMemberLogin(request, response, memberDto);
+		MemberLoginVo memberLoginVo         = memberService.selectMemberLogin(memberDto);
 
 		try {
 			if (memberLoginVo.memberIdx > 0) {
@@ -134,7 +132,6 @@ public class MemberController {
 	/**
 	 * 회원 가입
 	 */
-	@Noheader
 	@Operation(summary = "학부모 회원 가입", description = "학부모 회원 가입", responses = {
 			@ApiResponse(responseCode = "200", description = "학부모 회원 가입 성공"),
 			@ApiResponse(responseCode = "404", description = "학부모 회원 가입 오류", content = @Content(schema = @Schema(implementation = JsonResponse.class)))
@@ -184,7 +181,6 @@ public class MemberController {
 	/**
 	 * 프로필 사진 등록
 	 */
-	@Noheader
 	@Operation(summary = "프로필 사진 등록", description = "회원 가입시 프로필 사진 등록, 저장 경로 리턴해 주기 ", responses = {
 			@ApiResponse(responseCode = "200", description = "프로필 사진 등록 성공")
 			, @ApiResponse(responseCode = "404", description = "프로필 사진 등록 에러", content = @Content(schema = @Schema(implementation = JsonResponse.class)))

@@ -1,6 +1,5 @@
 package com.example.reactboot.modules.aes;
 
-import com.example.reactboot.common.annotation.Noheader;
 import com.example.reactboot.common.response.JsonResponse;
 import com.example.reactboot.common.utils.AES128Crypto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "${api.data}/encryption")
 public class AESController {
 
-    @Noheader
     @Operation(summary = "AES 암호화 데이터 출력", responses = {
             @ApiResponse(responseCode = "200", description = "암호화 성공")
     })

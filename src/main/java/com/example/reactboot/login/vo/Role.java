@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 @Getter
 public enum Role {
-      ROLE_HA("ROLE_HA"                 , "최고 관리자")
+      ROLE_HQ("ROLE_HQ"                 , "관리자")
     , ROLE_PA("ROLE_PA"                 , "학부모")
     , ROLE_ST("ROLE_ST"                 , "학생")
     , ROLE_NO("ROLE_NO"                 , "접근 권한 없음");
@@ -37,7 +37,7 @@ public enum Role {
 			return ROLE_NO;
 		} else {
 			if (AUTH_HA.equals(memberAuth)) {
-				return ROLE_HA;
+				return ROLE_HQ;
 			}
 			if (AUTH_PA.equals(memberAuth)) {
 				return ROLE_PA;

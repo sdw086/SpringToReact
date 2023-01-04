@@ -21,8 +21,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         String originalURL                  = urlPathHelper.getOriginatingRequestUri(request);
     
         // 권한이 없는 사용자 패턴 만들어줄수있는 곳..
+		System.out.println("================================================");
+		System.out.println("실행");
+		System.out.println("================================================");
 		
         //로직을 짜서 상황에 따라 보내줄 주소를 설정해주면 됨
-        response.sendRedirect("/main");
+        //response.sendRedirect("/main");
 	}
 }

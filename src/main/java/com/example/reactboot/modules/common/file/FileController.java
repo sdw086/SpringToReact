@@ -1,6 +1,5 @@
 package com.example.reactboot.modules.common.file;
 
-import com.example.reactboot.common.annotation.Noheader;
 import com.example.reactboot.common.response.JsonResponse;
 import com.example.reactboot.modules.common.file.dto.FileDto;
 import com.example.reactboot.modules.common.file.service.FileService;
@@ -32,7 +31,6 @@ public class FileController {
 	/**
 	 * 첨부파일 업로드
 	 */
-	@Noheader
 	@Operation(summary = "파일 업로드", description = "파일 저장 공통 모듈", responses = {
 			@ApiResponse(responseCode = "200", description = "첨부 파일 업로드 성공"),
 			@ApiResponse(responseCode = "404", description = "첩무 파일 업로드 실패", content = @Content(schema = @Schema(implementation = JsonResponse.class)))

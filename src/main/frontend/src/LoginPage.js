@@ -17,10 +17,14 @@ const LoginPage = () => {
 		console.log(username);
 		console.log(password);
 
-		axios.post('/api/member/login', null, { params : {
+		axios.post('/api/member/login', JSON.stringify({
 			username: username,
 			passwd: password
-		}})
+		}) , {
+			headers: {
+				"Content-Type": `application/json`,
+			}
+		})
 		.then(function (response) {
 			console.log(response);
 		})
